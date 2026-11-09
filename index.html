@@ -1,38 +1,772 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FOREVER WRLD — Our Minecraft Memories</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{--bg:#f3f1e8;--paper:#fffefa;--ink:#24372c;--muted:#788477;--green:#49654d;--sage:#dce5d7;--line:#e5e3d8;--shadow:0 18px 48px #263b2c12}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 12% 0%,#e4eadc 0,transparent 34%),var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}button,input{font:inherit}.shell{max-width:1160px;margin:auto;padding:28px 28px 76px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0 20px;border-bottom:1px solid #d9ded2}.brand{font-size:12px;letter-spacing:.25em;font-weight:850}.brand:before{content:'✳';color:var(--green);font-size:18px;margin-right:10px;vertical-align:-2px}.server{font-size:12px;color:var(--muted);letter-spacing:.03em}.hero{position:relative;overflow:hidden;text-align:center;margin:34px 0 52px;padding:76px 24px 68px;border:1px solid #dce3d7;border-radius:24px;background:linear-gradient(135deg,#e5ebdf 0%,#f7f5eb 52%,#dce6d9 100%);box-shadow:var(--shadow)}.hero:before,.hero:after{content:'';position:absolute;border:1px solid #ffffff99;border-radius:50%;pointer-events:none}.hero:before{width:380px;height:380px;left:-180px;top:-230px}.hero:after{width:280px;height:280px;right:-100px;bottom:-190px}.eyebrow{text-transform:uppercase;letter-spacing:.25em;font-size:10px;color:var(--green);font-weight:800}.hero h1{font-family:Georgia,serif;font-size:clamp(48px,8vw,82px);font-weight:400;letter-spacing:-.065em;line-height:.98;margin:18px 0 16px}.hero p{color:#687668;margin:0;font:15px Georgia,serif}.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:30px}.btn{border:1px solid var(--green);background:var(--green);color:white;border-radius:999px;padding:12px 21px;cursor:pointer;font-size:12px;font-weight:650;letter-spacing:.02em;transition:.2s}.btn.secondary{background:#ffffff80;color:var(--green);border-color:#aebba9}.btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px #263b2c18}.toolbar{display:flex;justify-content:space-between;align-items:end;gap:14px;margin:0 0 20px;padding:0 2px}.toolbar h2{font:400 31px Georgia,serif;letter-spacing:-.035em;margin:0}.count{font-size:11px;color:var(--muted);border:1px solid var(--line);background:#ffffff80;padding:7px 12px;border-radius:99px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.card{background:var(--paper);border:1px solid #e7e5db;border-radius:16px;overflow:hidden;box-shadow:0 5px 20px #24372c08;cursor:pointer;transition:transform .22s,box-shadow .22s}.card:hover{transform:translateY(-5px);box-shadow:var(--shadow)}.photo{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:linear-gradient(135deg,#dfe7d9,#eeeadd)}.meta{padding:15px 17px 17px}.caption{font:19px Georgia,serif;margin:0 0 7px}.date{font-size:10px;color:#899184;letter-spacing:.08em;text-transform:uppercase}.empty{grid-column:1/-1;text-align:center;padding:75px 20px;border:1px dashed #bdc9b8;border-radius:18px;color:var(--muted);background:#ffffff55}.empty strong{display:block;font:27px Georgia,serif;color:var(--ink);margin-bottom:9px}.footer{text-align:center;color:#92998d;font-size:10px;margin-top:65px;letter-spacing:.19em}.modal{position:fixed;inset:0;background:#17251ddd;backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:22px;z-index:5}.modal.open{display:flex}.viewer{max-width:min(1000px,95vw);max-height:92vh;background:var(--paper);border-radius:18px;overflow:hidden;position:relative;box-shadow:0 25px 90px #0005}.viewer img{display:block;max-width:100%;max-height:75vh;object-fit:contain;background:#171b17}.viewer-info{padding:17px 20px}.viewer-info h3{font:25px Georgia,serif;margin:0 0 6px}.viewer-info p{font-size:11px;color:var(--muted);margin:0;letter-spacing:.06em;text-transform:uppercase}.close{position:absolute;right:12px;top:12px;border:0;border-radius:50%;width:38px;height:38px;background:#fff;color:#222;font-size:22px;cursor:pointer;box-shadow:0 3px 12px #0002}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#263b2c;color:white;padding:12px 18px;border-radius:99px;font-size:12px;display:none;z-index:8;box-shadow:var(--shadow)}.toast.show{display:block}
-@media(max-width:760px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{padding:62px 20px 56px;margin:25px 0 42px}}@media(max-width:480px){.shell{padding:18px 15px 50px}.grid{grid-template-columns:1fr;gap:14px}.top{align-items:flex-start;flex-direction:column}.toolbar{align-items:flex-start;flex-direction:column}.photo{aspect-ratio:16/10}.hero h1{font-size:53px}}
+:root {
+  --bg:#f3f1e8;
+  --paper:#fffefa;
+  --ink:#24372c;
+  --muted:#788477;
+  --green:#49654d;
+  --sage:#dce5d7;
+  --line:#e5e3d8;
+  --shadow:0 18px 48px #263b2c12;
+}
+
+* {box-sizing:border-box}
+
+body {
+  margin:0;
+  background:radial-gradient(ellipse at 12% 0%,#e4eadc 0,transparent 34%),var(--bg);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,sans-serif;
+}
+
+button,input {font:inherit}
+
+.shell {
+  max-width:1160px;
+  margin:auto;
+  padding:28px 28px 76px;
+}
+
+.top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:10px 0 20px;
+  border-bottom:1px solid #d9ded2;
+}
+
+.brand {
+  font-size:12px;
+  letter-spacing:.25em;
+  font-weight:850;
+}
+
+.brand:before {
+  content:'✳';
+  color:var(--green);
+  font-size:18px;
+  margin-right:10px;
+}
+
+.server {
+  font-size:12px;
+  color:var(--muted);
+}
+
+.hero {
+  text-align:center;
+  margin:34px 0 52px;
+  padding:76px 24px 68px;
+  border:1px solid #dce3d7;
+  border-radius:24px;
+  background:linear-gradient(135deg,#e5ebdf,#f7f5eb 52%,#dce6d9);
+  box-shadow:var(--shadow);
+}
+
+.eyebrow {
+  text-transform:uppercase;
+  letter-spacing:.25em;
+  font-size:10px;
+  color:var(--green);
+  font-weight:800;
+}
+
+.hero h1 {
+  font-family:Georgia,serif;
+  font-size:clamp(48px,8vw,82px);
+  font-weight:400;
+  letter-spacing:-.065em;
+  line-height:.98;
+  margin:18px 0 16px;
+}
+
+.hero p {
+  color:#687668;
+  margin:0;
+  font:15px Georgia,serif;
+}
+
+.actions {
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:30px;
+}
+
+.btn {
+  border:1px solid var(--green);
+  background:var(--green);
+  color:white;
+  border-radius:999px;
+  padding:12px 21px;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:650;
+  transition:.2s;
+}
+
+.btn.secondary {
+  background:#ffffff80;
+  color:var(--green);
+  border-color:#aebba9;
+}
+
+.btn:hover {
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px #263b2c18;
+}
+
+button:disabled {
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.login-panel {
+  display:none;
+  max-width:350px;
+  margin:24px auto 0;
+  padding:20px;
+  background:#ffffffb8;
+  border:1px solid #dce3d7;
+  border-radius:15px;
+  text-align:left;
+}
+
+.login-panel.open {display:block}
+
+.login-panel input {
+  width:100%;
+  padding:12px;
+  margin:6px 0 12px;
+  border:1px solid #d9ded2;
+  border-radius:9px;
+  background:white;
+  color:var(--ink);
+  outline:none;
+}
+
+.login-panel label {
+  font-size:11px;
+  color:var(--muted);
+}
+
+.login-panel .btn {width:100%}
+
+.toolbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:14px;
+  margin:0 0 20px;
+}
+
+.toolbar h2 {
+  font:400 31px Georgia,serif;
+  margin:0;
+}
+
+.count {
+  font-size:11px;
+  color:var(--muted);
+  border:1px solid var(--line);
+  background:#ffffff80;
+  padding:7px 12px;
+  border-radius:99px;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:22px;
+}
+
+.card {
+  background:var(--paper);
+  border:1px solid #e7e5db;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 5px 20px #24372c08;
+  cursor:pointer;
+  transition:.22s;
+}
+
+.card:hover {
+  transform:translateY(-5px);
+  box-shadow:var(--shadow);
+}
+
+.photo {
+  width:100%;
+  aspect-ratio:4/3;
+  object-fit:cover;
+  display:block;
+  background:var(--sage);
+}
+
+.meta {padding:15px 17px 17px}
+
+.caption {
+  font:19px Georgia,serif;
+  margin:0 0 7px;
+}
+
+.date {
+  font-size:10px;
+  color:#899184;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.delete-btn {
+  margin-top:12px;
+  padding:7px 12px;
+  border:1px solid #d9b9b3;
+  color:#a34e43;
+  background:#fff8f5;
+  border-radius:99px;
+  cursor:pointer;
+  font-size:11px;
+}
+
+.empty {
+  grid-column:1/-1;
+  text-align:center;
+  padding:75px 20px;
+  border:1px dashed #bdc9b8;
+  border-radius:18px;
+  color:var(--muted);
+  background:#ffffff55;
+}
+
+.empty strong {
+  display:block;
+  font:27px Georgia,serif;
+  color:var(--ink);
+  margin-bottom:9px;
+}
+
+.footer {
+  text-align:center;
+  color:#92998d;
+  font-size:10px;
+  margin-top:65px;
+  letter-spacing:.19em;
+}
+
+.modal {
+  position:fixed;
+  inset:0;
+  background:#17251ddd;
+  backdrop-filter:blur(8px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:22px;
+  z-index:5;
+}
+
+.modal.open {display:flex}
+
+.viewer {
+  max-width:min(1000px,95vw);
+  max-height:92vh;
+  background:var(--paper);
+  border-radius:18px;
+  overflow:hidden;
+  position:relative;
+}
+
+.viewer img {
+  display:block;
+  max-width:100%;
+  max-height:75vh;
+  object-fit:contain;
+  background:#171b17;
+}
+
+.viewer-info {padding:17px 20px}
+
+.viewer-info h3 {
+  font:25px Georgia,serif;
+  margin:0 0 6px;
+}
+
+.viewer-info p {
+  font-size:11px;
+  color:var(--muted);
+  margin:0;
+}
+
+.close {
+  position:absolute;
+  right:12px;
+  top:12px;
+  border:0;
+  border-radius:50%;
+  width:38px;
+  height:38px;
+  background:white;
+  font-size:22px;
+  cursor:pointer;
+}
+
+.toast {
+  position:fixed;
+  bottom:22px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#263b2c;
+  color:white;
+  padding:12px 18px;
+  border-radius:99px;
+  font-size:12px;
+  display:none;
+  z-index:8;
+}
+
+.toast.show {display:block}
+
+@media(max-width:760px) {
+  .grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero {padding:62px 20px 56px}
+}
+
+@media(max-width:480px) {
+  .shell {padding:18px 15px 50px}
+  .grid {grid-template-columns:1fr;gap:14px}
+  .top {align-items:flex-start;flex-direction:column}
+  .hero h1 {font-size:53px}
+}
 </style>
 </head>
+
 <body>
+
 <div class="shell">
-<header class="top"><div class="brand">FOREVER WRLD</div><div class="server">A little archive of our Minecraft world</div></header>
-<section class="hero"><div class="eyebrow">✳ &nbsp; Our world · Our memories &nbsp; ✳</div><h1>Forever<br>starts here.</h1><p>A little place for everything we never want to forget.</p><div class="actions"><button class="btn" id="addBtn">＋ Add photos</button><button class="btn secondary" id="demoBtn">Add example memory</button><input id="fileInput" type="file" accept="image/*" multiple hidden></div></section>
-<section><div class="toolbar"><h2>Collected moments</h2><div class="count" id="count">0 memories</div></div><div class="grid" id="gallery"><div class="empty"><strong>Your story starts here</strong>Add your first Minecraft screenshot to keep it forever.</div></div></section>
-<footer class="footer">MADE FOR THE MEMORIES · FOREVERWRLD.CO.UK</footer>
+
+<header class="top">
+  <div class="brand">FOREVER WRLD</div>
+  <div class="server">A little archive of our Minecraft world</div>
+</header>
+
+<section class="hero">
+
+  <div class="eyebrow">✳ &nbsp; Our world · Our memories &nbsp; ✳</div>
+
+  <h1>Forever<br>starts here.</h1>
+
+  <p>A little place for everything we never want to forget.</p>
+
+  <div class="actions">
+    <button class="btn" id="addBtn" hidden>＋ Add photos</button>
+    <button class="btn secondary" id="loginBtn">Admin login</button>
+    <button class="btn secondary" id="logoutBtn" hidden>Log out</button>
+    <input id="fileInput" type="file" accept="image/*" multiple hidden>
+  </div>
+
+  <div class="login-panel" id="loginPanel">
+    <label>Email address</label>
+    <input id="email" type="email" placeholder="Admin email">
+
+    <label>Password</label>
+    <input id="password" type="password" placeholder="Admin password">
+
+    <button class="btn" id="signInBtn">Log in</button>
+  </div>
+
+</section>
+
+<section>
+
+  <div class="toolbar">
+    <h2>Collected moments</h2>
+    <div class="count" id="count">Loading...</div>
+  </div>
+
+  <div class="grid" id="gallery">
+    <div class="empty">
+      <strong>Loading memories...</strong>
+      Your gallery is being prepared.
+    </div>
+  </div>
+
+</section>
+
+<footer class="footer">
+  MADE FOR THE MEMORIES · FOREVERWRLD.CO.UK
+</footer>
+
 </div>
-<div class="modal" id="modal"><div class="viewer"><button class="close" id="close" aria-label="Close">×</button><img id="viewImage" alt="Minecraft memory"><div class="viewer-info"><h3 id="viewTitle"></h3><p id="viewDate"></p></div></div></div><div class="toast" id="toast"></div>
+
+<div class="modal" id="modal">
+  <div class="viewer">
+    <button class="close" id="close">×</button>
+    <img id="viewImage" alt="Minecraft memory">
+
+    <div class="viewer-info">
+      <h3 id="viewTitle"></h3>
+      <p id="viewDate"></p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-const DB='foreverwrld-gallery', STORE='memories';let db;
-const gallery=document.getElementById('gallery'),count=document.getElementById('count'),fileInput=document.getElementById('fileInput');
-function openDB(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB,1);req.onupgradeneeded=()=>req.result.createObjectStore(STORE,{keyPath:'id',autoIncrement:true});req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
-function all(){return new Promise((resolve,reject)=>{const r=db.transaction(STORE).objectStore(STORE).getAll();r.onsuccess=()=>resolve(r.result.sort((a,b)=>b.created-a.created));r.onerror=()=>reject(r.error)})}
-function save(item){return new Promise((resolve,reject)=>{const r=db.transaction(STORE,'readwrite').objectStore(STORE).add(item);r.onsuccess=resolve;r.onerror=()=>reject(r.error)})}
-function remove(id){return new Promise((resolve,reject)=>{const r=db.transaction(STORE,'readwrite').objectStore(STORE).delete(id);r.onsuccess=resolve;r.onerror=()=>reject(r.error)})}
-function dateText(ts){return new Date(ts).toLocaleDateString(undefined,{day:'numeric',month:'long',year:'numeric'})}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
-async function render(){const items=await all();count.textContent=`${items.length} ${items.length===1?'memory':'memories'}`;gallery.innerHTML='';if(!items.length){gallery.innerHTML='<div class="empty"><strong>Your story starts here</strong>Add your first Minecraft screenshot to keep it forever.</div>';return}for(const item of items){const url=URL.createObjectURL(item.image);const card=document.createElement('article');card.className='card';card.innerHTML=`<img class="photo" alt="${escapeHTML(item.title)}"><div class="meta"><p class="caption">${escapeHTML(item.title)}</p><div class="date">${dateText(item.created)}</div></div>`;card.querySelector('img').src=url;card.addEventListener('click',()=>show(item,url));gallery.append(card)}}
-function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function addFiles(files){for(const file of files){if(!file.type.startsWith('image/'))continue;const title=prompt('Give this memory a caption',file.name.replace(/\.[^.]+$/,'')||'A day in our world');if(title===null)continue;await save({title:title.trim()||'A day in our world',image:file,created:Date.now()})}await render();toast('Memory saved in this browser')}
-function show(item,url){document.getElementById('viewImage').src=url;document.getElementById('viewTitle').textContent=item.title;document.getElementById('viewDate').textContent=dateText(item.created);document.getElementById('modal').classList.add('open')}
-document.getElementById('addBtn').onclick=()=>fileInput.click();fileInput.onchange=()=>{addFiles([...fileInput.files]);fileInput.value=''};
-document.getElementById('close').onclick=()=>document.getElementById('modal').classList.remove('open');document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')e.currentTarget.classList.remove('open')};document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('modal').classList.remove('open')});
-document.getElementById('demoBtn').onclick=()=>toast('Use Add photos to upload your own screenshots');
-(async()=>{try{db=await openDB();await render()}catch(e){gallery.innerHTML='<div class="empty">Your browser could not open local photo storage. Try a current version of Chrome, Edge or Firefox.</div>'}})();
+
+// SUPABASE CONFIGURATION
+
+const SUPABASE_URL = 'https://jkyceuslxbymprrkcdys.supabase.co';
+
+const SUPABASE_ANON_KEY = 'sb_publishable_HGxvjgMX75aatYgZwZMitw_TkKCMwmH';
+
+const BUCKET = 'memories';
+
+const ADMIN_UID = '93f5aaae-f9be-4fdf-9483-4816b25fd243';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+// ELEMENTS
+
+const gallery = document.getElementById('gallery');
+const count = document.getElementById('count');
+const fileInput = document.getElementById('fileInput');
+const addBtn = document.getElementById('addBtn');
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+const loginPanel = document.getElementById('loginPanel');
+
+let isAdmin = false;
+
+// NOTIFICATIONS
+
+function toast(message) {
+  const t = document.getElementById('toast');
+  t.textContent = message;
+  t.classList.add('show');
+
+  setTimeout(() => {
+    t.classList.remove('show');
+  }, 2500);
+}
+
+// ADMIN LOGIN
+
+async function updateAuth() {
+  const {data,error} = await supabaseClient.auth.getSession();
+
+  if(error) {
+    toast('Could not check login status');
+    return;
+  }
+
+  const user = data.session?.user;
+  isAdmin = !!user && user.id === ADMIN_UID;
+
+  addBtn.hidden = !isAdmin;
+  loginBtn.hidden = isAdmin;
+  logoutBtn.hidden = !isAdmin;
+
+  loginPanel.classList.remove('open');
+}
+
+loginBtn.onclick = () => {
+  loginPanel.classList.toggle('open');
+};
+
+document.getElementById('signInBtn').onclick = async () => {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  if(!email || !password) {
+    toast('Enter your email and password');
+    return;
+  }
+
+  const {data,error} = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if(error) {
+    toast('Login failed: ' + error.message);
+    return;
+  }
+
+  if(data.user.id !== ADMIN_UID) {
+    await supabaseClient.auth.signOut();
+    toast('This account is not authorised as admin');
+    return;
+  }
+
+  await updateAuth();
+  toast('Admin logged in');
+  await render();
+};
+
+logoutBtn.onclick = async () => {
+  await supabaseClient.auth.signOut();
+  await updateAuth();
+  toast('Logged out');
+  await render();
+};
+
+// FILE HELPERS
+
+function slugify(text) {
+  return text
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-zA-Z0-9]+/g,'-')
+    .replace(/^-|-$/g,'')
+    .toLowerCase()
+    .slice(0,80) || 'minecraft-memory';
+}
+
+function getTitle(filename) {
+  const withoutExtension = filename.replace(/\.[^.]+$/,'');
+  const parts = withoutExtension.split('__');
+  const slug = parts.slice(1).join('__');
+
+  return slug
+    .replace(/-/g,' ')
+    .replace(/\b\w/g,c => c.toUpperCase()) || 'A day in our world';
+}
+
+function dateText(date) {
+  return new Date(date).toLocaleDateString(undefined,{
+    day:'numeric',
+    month:'long',
+    year:'numeric'
+  });
+}
+
+// LOAD GALLERY
+
+async function render() {
+  gallery.innerHTML = '';
+
+  const {data,error} = await supabaseClient.storage
+    .from(BUCKET)
+    .list('',{
+      limit:100,
+      sortBy:{
+        column:'name',
+        order:'desc'
+      }
+    });
+
+  if(error) {
+    gallery.innerHTML = `
+      <div class="empty">
+        <strong>Could not load memories</strong>
+        ${escapeHTML(error.message)}
+      </div>
+    `;
+
+    count.textContent = 'Error';
+    return;
+  }
+
+  const items = data.filter(item => item.id !== null);
+
+  count.textContent =
+    `${items.length} ${items.length === 1 ? 'memory' : 'memories'}`;
+
+  if(items.length === 0) {
+    gallery.innerHTML = `
+      <div class="empty">
+        <strong>Your story starts here</strong>
+        Add your first Minecraft screenshot to keep it forever.
+      </div>
+    `;
+    return;
+  }
+
+  for(const item of items) {
+    const {data:publicData} = supabaseClient.storage
+      .from(BUCKET)
+      .getPublicUrl(item.name);
+
+    const card = document.createElement('article');
+    card.className = 'card';
+
+    const img = document.createElement('img');
+    img.className = 'photo';
+    img.src = publicData.publicUrl;
+    img.alt = 'Minecraft memory';
+    img.loading = 'lazy';
+
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+
+    const caption = document.createElement('p');
+    caption.className = 'caption';
+    caption.textContent = getTitle(item.name);
+
+    const date = document.createElement('div');
+    date.className = 'date';
+    date.textContent = dateText(item.created_at);
+
+    meta.append(caption,date);
+
+    if(isAdmin) {
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'delete-btn';
+      deleteBtn.textContent = 'Delete photo';
+
+      deleteBtn.onclick = async (e) => {
+        e.stopPropagation();
+
+        if(!confirm('Are you sure you want to delete this memory?')) {
+          return;
+        }
+
+        const {error} = await supabaseClient.storage
+          .from(BUCKET)
+          .remove([item.name]);
+
+        if(error) {
+          toast('Could not delete photo');
+          return;
+        }
+
+        toast('Photo deleted');
+        await render();
+      };
+
+      meta.append(deleteBtn);
+    }
+
+    card.append(img,meta);
+
+    card.onclick = () => {
+      document.getElementById('viewImage').src = publicData.publicUrl;
+      document.getElementById('viewTitle').textContent = getTitle(item.name);
+      document.getElementById('viewDate').textContent = dateText(item.created_at);
+      document.getElementById('modal').classList.add('open');
+    };
+
+    gallery.append(card);
+  }
+}
+
+// UPLOAD PHOTOS
+
+addBtn.onclick = () => {
+  if(isAdmin) fileInput.click();
+};
+
+fileInput.onchange = async () => {
+  if(!isAdmin) {
+    toast('Admin access required');
+    return;
+  }
+
+  const files = [...fileInput.files];
+
+  if(!files.length) return;
+
+  addBtn.disabled = true;
+
+  let uploaded = 0;
+
+  for(const file of files) {
+    if(!file.type.startsWith('image/')) continue;
+
+    const title = prompt(
+      'Give this memory a caption',
+      file.name.replace(/\.[^.]+$/,'')
+    );
+
+    if(title === null) continue;
+
+    const extension = file.name.split('.').pop().toLowerCase();
+
+    const filename =
+      `${Date.now()}__${slugify(title)}.${extension}`;
+
+    const {error} = await supabaseClient.storage
+      .from(BUCKET)
+      .upload(filename,file,{
+        contentType:file.type,
+        upsert:false
+      });
+
+    if(error) {
+      toast('Upload failed: ' + error.message);
+    } else {
+      uploaded++;
+    }
+  }
+
+  fileInput.value = '';
+  addBtn.disabled = false;
+
+  await render();
+
+  if(uploaded > 0) {
+    toast(`${uploaded} ${uploaded === 1 ? 'photo' : 'photos'} uploaded`);
+  }
+};
+
+// VIEWER
+
+document.getElementById('close').onclick = () => {
+  document.getElementById('modal').classList.remove('open');
+};
+
+document.getElementById('modal').onclick = (e) => {
+  if(e.target.id === 'modal') {
+    e.currentTarget.classList.remove('open');
+  }
+};
+
+document.addEventListener('keydown',(e) => {
+  if(e.key === 'Escape') {
+    document.getElementById('modal').classList.remove('open');
+  }
+});
+
+// SECURITY AND INITIALISATION
+
+supabaseClient.auth.onAuthStateChange(() => {
+  setTimeout(async () => {
+    await updateAuth();
+    await render();
+  },0);
+});
+
+(async () => {
+  await updateAuth();
+  await render();
+})();
+
+function escapeHTML(text) {
+  return String(text).replace(/[&<>"']/g,c => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  })[c]);
+}
+
 </script>
-</body></html>
+
+</body>
+</html>
